@@ -103,15 +103,11 @@ module.exports = async function(deployer, network, accounts) {
 
   // Deploy your Smart and Secret contracts below this point:
 
-  deployer.deploy(Sample).then(function() {
-    console.log(`Smart Contract "Sample.Sol" has been deployed at ETH address: ${Sample.address}`);
-  });
-
   const config = {
-    filename: 'simple_addition.wasm',
+    filename: 'millionaires_problem.wasm',
     fn: 'construct()',
     args: '',
-    gasLimit: 100000,
+    gasLimit: 10000000,
     gasPrice: utils.toGrains(1),
     from: accounts[0],
   };
