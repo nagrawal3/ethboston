@@ -1,3 +1,4 @@
+/*
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -146,3 +147,4 @@ contract("MillionairesProblem", accounts => {
     }], task.decryptedOutput).richestMillionaire).to.equal(accounts[2]);
   });
 });
+*/

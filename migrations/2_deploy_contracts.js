@@ -104,7 +104,7 @@ module.exports = async function(deployer, network, accounts) {
   // Deploy your Smart and Secret contracts below this point:
 
   const config = {
-    filename: 'millionaires_problem.wasm',
+    filename: 'clinical_trial.wasm',
     fn: 'construct()',
     args: '',
     gasLimit: 10000000,
