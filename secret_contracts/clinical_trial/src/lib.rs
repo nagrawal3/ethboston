@@ -28,14 +28,8 @@ pub struct Contract;
 // Private functions accessible only by the secret contract
 impl Contract {
     fn get_participants() -> Vec<Participant> {
-        read_state!(PARTICIPANTS).unwrap_or_default()
+        return read_state!(PARTICIPANTS).unwrap_or_default();
     }
-    /*
-    fn get_participant(index: U256) -> Participant {
-        let mut participants = read_state!(PARTICIPANTS).unwrap_or_default()
-        return participants[index];
-    }
-    */
 }
 
 // Public trait defining public-facing secret contract functions
@@ -43,8 +37,10 @@ impl Contract {
 pub trait ContractInterface{
     fn add_participant(id: U256, age: U256, real: bool);
     fn get_participant_count() -> U256;
-    // fn write_result(id: u256, result: U256);
-    // fn computeRealResult() -> U256;
+    fn write_result(id: U256, result: U256);
+    fn sum_ages() -> U256;
+    fn sum_results() -> U256;
+    fn compute_avg_result(real: bool) -> U256;
     // fn computePlaceboResult() -> U256;
     // fn computeRealResult(age: U8, overunder: bool) -> U256;
     // fn computePlaceboResult(age: U8, overunder: bool) -> U256;
@@ -71,26 +67,49 @@ impl ContractInterface for Contract {
         return U256::from(participants.len());
     }
 
-    /*
     #[no_mangle]
-    fn write_results(id: U256, age: U8, real: bool) {
-        let mut participants = Self::get_millionaires();
-        participants.push(Participant {
-            id,
-            age,
-            real,
-        });
-        write_state!(MILLIONAIRES => millionaires);
+    fn write_result(_id: U256, _result: U256) {
+        let mut participants = Self::get_participants();
+
+        for mut participant in &mut participants {
+            if _id == participant.id {
+                participant.result = Some(_result);
+            }
+        }
+        write_state!(PARTICIPANTS => participants);
     }
 
     #[no_mangle]
-    fn compute_richest() -> H160 {
-        match Self::get_millionaires().iter().max_by_key(|m| m.net_worth) {
-            Some(millionaire) => {
-                millionaire.address
-            },
-            None => H160::zero(),
+    fn sum_ages() -> U256 {
+        let participants = Self::get_participants();
+        let mut sum: U256 = U256::from(0);
+        for participant in participants {
+            sum += participant.age;
         }
+        return sum;
     }
-    */
+
+    #[no_mangle]
+    fn sum_results() -> U256 {
+        let participants = Self::get_participants();
+        let mut sum: U256 = U256::from(0);
+        for participant in participants {
+            sum += participant.result.unwrap();
+        }
+        return sum;
+    }
+
+    fn compute_avg_result(_real: bool) -> U256 {
+        let participants = Self::get_participants();
+        let mut sum: U256 = U256::from(0);
+        let mut count: U256 = U256::from(0);
+        for participant in participants {
+            if participant.real == _real {
+                sum += participant.result.unwrap();
+                count = count + 1;
+            }
+        }
+        let calculation: U256 = sum / count;
+        return calculation;
+    }
 }
